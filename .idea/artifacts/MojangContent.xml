@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="MojangContent">
+    <output-path>$PROJECT_DIR$/out/artifacts/MojangContent</output-path>
+    <root id="archive" name="MojangContent.jar">
+      <element id="module-output" name="MCMojang" />
+    </root>
+  </artifact>
+</component>
