@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class MojangContent {
 
-    private ConcurrentHashMap<String, Status> apiStatus = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Status> apiStatus = new ConcurrentHashMap<>();
 
     public MojangContent connect() {
         JSONObject obj = getJsonContent("https://status.mojang.com/check");
@@ -53,24 +53,24 @@ public class MojangContent {
     }
 
     public Map<String, Long> getNameHistoryOfPlayer(String uuid) {
-        ConcurrentHashMap<String, Long> history = new ConcurrentHashMap<>();
+        final ConcurrentHashMap<String, Long> history = new ConcurrentHashMap<>();
         getJSONArray("https://api.mojang.com/user/profiles/" + uuid + "/names").forEach(o -> history.put((String) ((JSONObject) o).get("name"), ((JSONObject) o).get("changedToAt") == null ? 0 : Long.parseLong(((JSONObject) o).get("changedToAt").toString())));
         return history;
     }
 
-    private static JSONArray getJSONArray(String url) {
+    public JSONArray getJSONArray(String url) {
         JSONArray arr = null;
         try {
             arr = (JSONArray) new JSONParser().parse(Unirest.get(url).asString().getBody());
-
         } catch (Exception e) {
-            if (e instanceof ParseException) {
+            if (e instanceof ParseException)
                 throw new RuntimeException(e);
-            } else if (e instanceof ClassCastException) {
+            else if (e instanceof ClassCastException) {
                 JSONObject obj = null;
                 try {
                     obj = (JSONObject) new JSONParser().parse(Unirest.get(url).toString());
                 } catch (Exception e1) { e1.printStackTrace(); }
+                assert obj != null;
                 String err = (String) (obj.get("error"));
                 if (err != null) {
                     switch (err) {
@@ -124,7 +124,7 @@ public class MojangContent {
         return stats;
     }
 
-    private static JSONObject getJsonContent(String url) {
+    public JSONObject getJsonContent(String url) {
         JSONObject obj;
         try {
             obj = (JSONObject) new JSONParser().parse(Unirest.get(url).asString().getBody());
@@ -142,5 +142,7 @@ public class MojangContent {
         return obj;
     }
 
-
+    public ConcurrentHashMap<String, Status> getApiStatus() {
+        return apiStatus;
+    }
 }
